@@ -1,38 +1,40 @@
-# ContextPilot — Local RAG Workflow Assistant
+# SourceRecall — Local RAG Assistant for Notes, Logs, and Documents
 
-ContextPilot is a local retrieval-augmented generation system for querying messy notes, logs, and documents. It is designed to work across multiple domains, including fitness logs, business notes, project documentation, client records, and internal workflow data.
+SourceRecall is a local retrieval-augmented generation system for querying messy notes, logs, and documents.
 
-The project focuses on building the core RAG pipeline without hiding everything behind a large framework: document ingestion, chunking, embeddings, vector storage, retrieval, prompt construction, local LLM generation, and basic evaluation.
+The goal is to learn how RAG systems work by building the pipeline piece by piece: document ingestion, chunking, embeddings, vector storage, retrieval, prompt construction, local LLM generation, and basic evaluation.
+
+The first test data uses fitness logs because they are easy to verify, but the system is designed to be reusable across other domains like business notes, project documentation, client records, and internal workflow data.
 
 ## Why I Built This
 
-I built ContextPilot to understand how practical RAG systems work beyond demos. Instead of only calling an LLM directly, this project retrieves relevant source context first, then uses that context to generate grounded answers.
+I built SourceRecall to understand how practical RAG systems work beyond demos. Instead of only calling an LLM directly, this project retrieves relevant source context first, then uses that context to generate grounded answers.
 
-The first sample data includes fitness and business-style notes, but the pipeline is domain-agnostic and can be reused for other document types.
+This project is intentionally built without hiding the whole pipeline behind a large framework. I want to understand how the data moves through each stage and where RAG systems can succeed or fail.
 
 ## Features
 
-- Load `.md` and `.txt` documents from `data/raw/`
-- Split documents into overlapping text chunks
-- Create local embeddings using Sentence Transformers
-- Store chunks in ChromaDB
-- Retrieve relevant chunks for a natural language query
-- Generate grounded answers with a local Ollama model
-- Print source chunks used in the answer
+* Load `.md` and `.txt` documents from `data/raw/`
+* Split documents into overlapping text chunks
+* Create local embeddings using Sentence Transformers
+* Store chunks in ChromaDB
+* Retrieve relevant chunks for a natural language query
+* Generate grounded answers with a local Ollama model
+* Print source chunks used in the answer
 
 ## Tech Stack
 
-- Python
-- ChromaDB
-- Sentence Transformers
-- Ollama
-- Typer
-- Rich
+* Python
+* ChromaDB
+* Sentence Transformers
+* Ollama
+* Typer
+* Rich
 
 ## Project Structure
 
 ```txt
-contextpilot-rag/
+source-recall/
 ├── data/
 │   └── raw/
 ├── src/
@@ -46,3 +48,4 @@ contextpilot-rag/
 ├── .env.example
 ├── requirements.txt
 └── README.md
+```
