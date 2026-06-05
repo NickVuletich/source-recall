@@ -1,52 +1,44 @@
 """
-STORAGE MODULE
+get_chroma_client(path="chroma_db")
+reset_collection(client, collection_name)
+build_vector_store()
+main()
 
-Purpose:
-Store embeddings and their associated text in a vector database.
+function get_chroma_client(path):
+    create persistent Chroma client at path
+    return client
+    
+function reset_collection(client, collection_name):
+    try to delete old collection
+    ignore error if collection does not exist
 
-Responsibilities:
-- Initialize a local vector database
-- Store embeddings along with original text and identifiers
+    create new collection
+    return collection
+    
+function build_vector_store():
+    load documents
+    chunk documents
 
-Steps to Implement:
+    if no chunks:
+        raise error
 
-1. Import the vector database library (Chroma)
+    load embedding model
+    embed chunk texts
 
-2. Initialize a client
-   - This should run once when the file is loaded
+    create Chroma client
+    reset/create collection
 
-3. Create or get a collection
-   - Give it a clear name (e.g., "fitness_logs")
+    prepare:
+        ids = chunk ids
+        documents = chunk texts
+        embeddings = chunk embeddings
+        metadatas = source + chunk_index
 
-4. Create a function (e.g., store_embedding)
+    add everything to Chroma collection
 
-   Input:
-   - id (string, usually filename or date)
-   - text (original document)
-   - embedding (list of floats)
-
-   Output:
-   - none (just stores data)
-
-5. Inside the function:
-   - Add the data to the collection:
-     - documents → original text
-     - embeddings → vector
-     - ids → unique identifier
-
-Important:
-- Always store BOTH the embedding AND the original text
-- IDs must be unique per document
-
-Notes:
-- Do NOT generate embeddings here
-- Do NOT read files here
-- This file ONLY handles storing data
-
-Test Idea:
-- Manually call your function with a fake embedding and text
-- Ensure no errors occur when adding to the collection
+    return summary:
+        document_count
+        chunk_count
+        collection_name
+        
 """
-
-import chromadb
-
