@@ -11,7 +11,7 @@ function build_prompt(query, chunks):
         add chunk text
 
     create prompt:
-        You are ContextPilot.
+        You are SourceRecall.
         Answer only using the context.
         If the answer is not in context, say you do not know.
         Context: ...
