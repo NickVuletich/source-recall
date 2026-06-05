@@ -1,28 +1,30 @@
-"""
-SUPPORTED_EXTENSIONS = {".txt", ".md"}
+from pathlib import Path
+import os
+def load_documents(data_dir):
+    data_dir = Path(data_dir)
 
-function load_documents(data_dir):
-    turn data_dir into a Path object
+    if not data_dir.exists():
+        raise FileNotFoundError(f"File {data_dir} not found.")
+    
+    documents = []
 
-    if folder does not exist:
-        raise error
-
-    create empty documents list
-
-    loop through every file inside folder:
-        if it is a file AND extension is supported:
-            read text
-            create dictionary with source, text, char_count
-            append dictionary to documents
-
+    for root, _, files in os.walk(data_dir):
+        for name in files:
+            if name.lower().endswith((".txt", ".md")):
+                file_path = Path(root) / name
+                text = file_path.read_text(encoding="utf-8")
+                documents.append({
+                    "source": str(file_path),
+                    "text": text,
+                    "char_count": len(text),
+                })
     return documents
 
-    call load_documents()
-    print number of documents
-    for each document:
-        print source
-        print char count
-        print preview of first 200-300 characters
-    """
-def load_documents(data_dir):
-    
+if __name__ == "__main__":
+    list_docs = load_documents("data/raw")
+    print(f"Number of documents is: {len(list_docs)}")
+
+    for doc in list_docs:
+        print(f"Source:", doc["source"])
+        print(f"Character count:", doc["char_count"])
+        print(f"Preview:", doc["text"][:300])
