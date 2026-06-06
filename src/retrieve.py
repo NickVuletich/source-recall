@@ -1,37 +1,42 @@
-"""
-retrieve_chunks(query, top_k=3)
-main()
+import chromadb
+from embed import load_embedding_model, embed_texts
+from store import CHROMA_PATH, COLLECTION_NAME
 
-function retrieve_chunks(query, top_k):
-    connect to existing ChromaDB
-    get collection
+def retrieve_chunks(query, top_k=3):
+    client = chromadb.PersistentClient(path=CHROMA_PATH)
+    collection = client.get_collection(name=COLLECTION_NAME)
 
-    load same embedding model
-    embed the user query
+    model = load_embedding_model()
 
-    ask Chroma for top_k closest chunks
+    query_embedding = embed_texts([query], model)[0]
 
-    create empty retrieved list
+    results = collection.query(
+        query_embeddings=query_embedding,
+        n_results=top_k,
+    )
 
-    for each result:
-        create dictionary:
-            id
-            text
-            metadata
-            distance
+    retrieved_list = []
 
-        append to retrieved list
+    for index in range(len(results["ids"][0])):
+        store = {
+            "id": results["ids"][0][index],
+            "text": results["documents"][0][index],
+            "metadata": results["metadatas"][0][index],
+            "distance": results["distances"][0][index],
+        }
+        retrieved_list.append(store)
 
-    return retrieved
-    
-read query from command line
-call retrieve_chunks(query)
-print each result:
-    source
-    distance
-    preview text
-    
-python src/retrieve.py "Which day did I hit a PR?"
-python src/retrieve.py "What was my protein intake?"
-python src/retrieve.py "Which day was a rest day?"
-"""
+    return retrieved_list
+
+if __name__ == "__main__":
+    query = "Which day did I hit a PR?"
+    results = retrieve_chunks(query)
+
+    print(f"Query: {query}")
+    print(f"Results found: {len(results)}")
+
+    for result in results:
+        print("=" * 80)
+        print(f"Source: {result['metadata']['source']}")
+        print(f"Distance: {result['distance']}")
+        print(result["text"][:300])
