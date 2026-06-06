@@ -1,40 +1,51 @@
-"""
-build_prompt(query, chunks)
-generate_answer(query, chunks, model="llama3.2")
-main()
+import ollama
+from retrieve import retrieve_chunks
 
-function build_prompt(query, chunks):
-    create empty context string
+def build_prompt(query, chunks):
+    context_blocks = []
 
-    for each chunk:
-        add source label
-        add chunk text
+    for chunk in chunks:
+        source = chunk["metadata"]["source"]
+        text = chunk["text"]
 
-    create prompt:
-        You are SourceRecall.
-        Answer only using the context.
-        If the answer is not in context, say you do not know.
-        Context: ...
-        Question: ...
-        Answer:
+        context_block = f"[Source: {source}]\n{text}"
+        context_blocks.append(context_block)
 
-    return prompt
+    context_string = "\n\n".join(context_blocks)
+
+    prompt = f"""
+You are SourceRecall, a local RAG assistant.
+
+Answer the user's question using only the provided context.
+If the answer is not in the context, say you do not have enough information.
+
+Context:
+{context_string}
+
+Question:
+{query}
+
+Answer:
+""".strip()
     
-function generate_answer(query, chunks, model):
+    return prompt
+
+
+def generate_answer(query, chunks, model_name="llama3.2"):
     prompt = build_prompt(query, chunks)
 
-    send prompt to Ollama model
+    response = ollama.generate(
+        model=model_name,
+        prompt=prompt,
+    )
 
-    get response text
+    return response["response"]
 
-    return response text
-    
-read query from command line
-retrieve chunks
-generate answer
-print answer
-print sources
 
-python src/generate.py "Which day did I hit a PR?"
+if __name__ == "__main__":
+    query = "Which day did I hit a PR?"
+    chunks = retrieve_chunks(query)
 
-"""
+    answer = generate_answer(query, chunks)
+    print(answer)
+
