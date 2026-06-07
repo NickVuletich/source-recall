@@ -1,0 +1,14 @@
+category: business notes
+
+Client: Sarah Miller
+Sarah runs a small home services business. She wants help organizing customer follow-ups because leads are currently tracked manually in a spreadsheet.
+
+Pain points:
+- follow-ups are easy to forget
+- customer notes are scattered
+- no simple way to summarize conversations
+
+action items:
+- ask Sarah what CRM or spreadsheet she currently uses
+- create a simple follow-up workflow
+- send summary by Friday

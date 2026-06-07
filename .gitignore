@@ -12,6 +12,11 @@ chroma_db/
 .DS_Store
 outputs/
 
+# Private/local data
+data/private/
+data/raw/real_*.txt
+data/raw/*2025*.txt
+
 # C extensions
 *.so
 

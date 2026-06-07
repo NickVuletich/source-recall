@@ -1,0 +1,18 @@
+date: 01-01-2000
+category: fitness log
+
+workout:
+type: chest + triceps
+exercises:
+- bench press: 225 lbs x 5
+- incline dumbbell press: 70 lbs x 8
+- triceps pushdowns: 80 lbs x 12
+
+nutrition:
+calories: 2050
+protein: 185g
+carbs: 180g
+fat: 55g
+
+notes:
+felt strong, hit a bench PR

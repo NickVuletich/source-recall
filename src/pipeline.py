@@ -1,24 +1,3 @@
-"""
-build
-ask
-
-create Typer app
-
-command build:
-    call build_vector_store()
-    print summary
-
-command ask(query, top_k=3):
-    retrieve chunks using query
-    generate answer using query + chunks
-    print answer
-    print sources
-    
-python src/pipeline.py build
-python src/pipeline.py ask "What did I eat on June 1?"
-
-"""
-
 import sys
 
 from store import build_vector_store
@@ -39,7 +18,15 @@ def main():
 
     if command == "build":
         summary = build_vector_store()
-        print(summary)
+
+        print("Building SourceRecall vector store...")
+        print()
+        print(f"Documents: {summary['document_count']}")
+        print(f"Chunks: {summary['chunk_count']}")
+        print(f"Embeddings: {summary['embedding_count']}")
+        print(f"Collection: {summary['collection_name']}")
+        print()
+        print("Build Complete.")
 
     elif command == "ask":
         if len(sys.argv) < 3:
@@ -48,12 +35,20 @@ def main():
         
         query = " ".join(sys.argv[2:])
 
-        chunks = retrieve_chunks(query)
+        chunks = retrieve_chunks(query, top_k=6)
         answer = generate_answer(query, chunks)
 
+        print("\nQuestion:")
+        print(query)
+
+        print("\nAnswer:")
         print(answer)
+
+        print("\nSources:")
         for chunk in chunks:
-            print(chunk["metadata"]["source"])
+            source = chunk["metadata"]["source"]
+            distance = chunk["distance"]
+            print(f"- {source} | distance={distance:.4f}")
 
     else:
         print("Unknown Command...")

@@ -1,0 +1,18 @@
+category: project notes
+
+Project: SourceRecall
+Goal: Build a local RAG assistant for querying notes, logs, and documents.
+
+Completed:
+- document ingestion
+- text chunking
+- embeddings with Sentence Transformers
+- ChromaDB vector storage
+- semantic retrieval
+- Ollama answer generation
+- CLI pipeline
+
+Known limitations:
+- must rebuild vector store after data changes
+- character-based chunking can split context
+- aggregate math needs structured parsing
