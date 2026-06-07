@@ -16,8 +16,14 @@ def build_prompt(query, chunks):
     prompt = f"""
 You are SourceRecall, a local RAG assistant.
 
-Answer the user's question using only the provided context.
-If the answer is not in the context, say you do not have enough information.
+Use only the retrieved context below to answer the user's question.
+
+Rules:
+- If the context directly contains the answer, answer clearly and do not say you lack information.
+- If the question asks for action items, tasks, completed work, notes, or limitations, list the relevant items exactly from the context.
+- Do not invent details that are not in the context.
+- Do not assume the retrieved context includes every document.
+- If the answer truly is not present in the retrieved context, say: "I do not have enough information in the retrieved sources."
 
 Context:
 {context_string}
@@ -37,6 +43,9 @@ def generate_answer(query, chunks, model_name="llama3.2"):
     response = ollama.generate(
         model=model_name,
         prompt=prompt,
+        options={
+        "temperature": 0.1
+    }
     )
 
     return response["response"]

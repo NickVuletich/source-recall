@@ -4,26 +4,26 @@ SourceRecall is a local retrieval-augmented generation system for querying messy
 
 The goal of this project is to understand how practical RAG systems work by building the core pipeline piece by piece: document ingestion, text chunking, embeddings, vector storage, semantic retrieval, prompt construction, and local LLM generation.
 
-The project runs locally using ChromaDB, Sentence Transformers, and Ollama. It does not require paid API credits.
+SourceRecall runs locally using ChromaDB, Sentence Transformers, and Ollama. It does not require paid API credits.
 
 ## Why I Built This
 
 I built SourceRecall to learn how RAG systems work beyond simple demos. Instead of sending a question directly to an LLM, SourceRecall first retrieves relevant source context from local documents and then uses that context to generate a grounded answer.
 
-This project is intentionally built without hiding the full pipeline behind a large framework. I wanted to understand how data moves through each stage, where retrieval can succeed, and where RAG systems can fail.
+This project is intentionally built without hiding the entire pipeline behind a large framework. I wanted to understand how data moves through each stage, where retrieval works well, and where RAG systems can fail.
 
-The first test data includes fitness logs, business-style notes, and project notes because they are easy to verify. The underlying system is domain-agnostic and can be reused for other local text documents.
+The sample data includes fitness logs, business notes, meeting notes, support tickets, and project documentation. The underlying system is domain-agnostic and can be reused for other local text documents.
 
 ## Features
 
-* Loads `.md` and `.txt` documents from `data/raw/`
-* Splits documents into overlapping text chunks
-* Creates local embeddings using Sentence Transformers
-* Stores chunks, embeddings, and metadata in ChromaDB
-* Retrieves relevant chunks for a natural language query
-* Generates grounded answers with a local Ollama model
-* Prints the source documents used for each answer
-* Provides a simple CLI workflow for building and querying the local vector store
+* Load `.md` and `.txt` documents from `data/raw/`
+* Split documents into overlapping text chunks
+* Create local embeddings using Sentence Transformers
+* Store chunks, embeddings, and metadata in ChromaDB
+* Retrieve relevant chunks for a natural language query
+* Generate grounded answers with a local Ollama model
+* Print retrieved source documents and similarity distances
+* Provide a simple CLI workflow for building and querying the local vector store
 
 ## Tech Stack
 
@@ -72,6 +72,8 @@ raw documents
 
 When a user asks a question, SourceRecall embeds the query, searches ChromaDB for the most relevant chunks, builds a prompt using the retrieved source context, and sends that prompt to a local Ollama model.
 
+The model is instructed to answer using only the retrieved context and to avoid inventing details that are not present in the sources.
+
 ## Setup
 
 Create and activate a virtual environment:
@@ -87,7 +89,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Install and run Ollama, then pull a local model:
+Install Ollama and pull a local model:
 
 ```bash
 ollama pull llama3.2
@@ -110,7 +112,7 @@ python src/pipeline.py build
 Ask a question:
 
 ```bash
-python src/pipeline.py ask "Which day did I hit a PR?"
+python src/pipeline.py ask "Which workout had a PR?"
 ```
 
 Whenever documents are added, removed, or edited, rebuild the vector store before asking new questions:
@@ -119,47 +121,77 @@ Whenever documents are added, removed, or edited, rebuild the vector store befor
 python src/pipeline.py build
 ```
 
-## Example Output
+## Example Queries
 
 Example query:
 
 ```bash
-python src/pipeline.py ask "Which day did I hit a PR?"
+python src/pipeline.py ask "What decisions were made in the AI workflow meeting?"
 ```
 
-Example answer:
+Example output:
 
 ```txt
 Question:
-Which day did I hit a PR?
+What decisions were made in the AI workflow meeting?
 
 Answer:
-You hit a PR on Day 1.
+The main goal of the team was to reduce time spent digging through scattered documents. The following decisions were made:
 
-Sources:
-- data/raw/test_day1.txt | distance=1.6272
-- data/raw/test_day2.txt | distance=1.7413
-- data/raw/test_day6.txt | distance=1.7545
+- start with local text files before adding PDFs
+- keep the first version CLI-based
+- prioritize source-grounded answers over fancy UI
+- document known limitations clearly
+
+Retrieved Sources:
+- data/raw/meeting_notes_sample.txt | distance=1.1045
+- data/raw/business_notes_sample.txt | distance=1.6022
+- data/raw/support_ticket_sample.txt | distance=1.7245
+```
+
+Another example:
+
+```bash
+python src/pipeline.py ask "What possible fixes are listed for unrelated sources?"
+```
+
+Example output:
+
+```txt
+Answer:
+The possible fixes listed for unrelated sources are:
+
+1. rename output from Sources to Retrieved Sources
+2. allow top_k to be configured from the command line
+3. improve chunking strategy
+4. add filtering by document category in the future
+
+Retrieved Sources:
+- data/raw/support_ticket_sample.txt | distance=1.0174
+- data/raw/project_notes_sample.txt | distance=1.5033
+- data/raw/meeting_notes_sample.txt | distance=1.6962
 ```
 
 ## Current Limitations
 
 * The vector store must be rebuilt after adding or editing documents.
-* The current chunking approach is character-based, so long documents may split important context across chunks.
-* Retrieval only returns the top matching chunks, so aggregate questions may not include every relevant document unless `top_k` is increased.
-* RAG is useful for retrieving relevant context, but reliable calculations and statistics require structured extraction.
-* The system currently works best with clear `.txt` or `.md` logs.
+* Current chunking is character-based, so long documents may split useful context across chunks.
+* Retrieval returns the top matching chunks, which may include loosely related sources when the dataset is small or `top_k` is high.
+* RAG is useful for source-grounded recall, but reliable totals, averages, maximums, and other calculations require structured extraction.
+* The current version is CLI-based and works best with clean `.txt` or `.md` files.
+* Retrieved source distances are useful for debugging, but they are not user-friendly confidence scores.
 
 ## Future Improvements
 
-* Add semantic or section-based chunking instead of only character-based chunking
-* Add structured extraction for dates, workouts, macros, tasks, and other fields
-* Add evaluation tests for retrieval quality and grounded answer accuracy
-* Add support for PDFs
-* Add a Streamlit or web interface
 * Add configurable `top_k` from the command line
-* Add better duplicate source handling in output
-* Add optional support for multiple document collections
+* Add semantic or section-based chunking
+* Add structured extraction for dates, macros, tasks, workouts, and other fields
+* Add PDF support
+* Add a Streamlit interface
+* Add document category filtering
+* Add duplicate source handling in the output
+* Add automated evaluation tests for retrieval quality
+* Add support for multiple document collections
 
 ## What I Learned
 
@@ -169,4 +201,6 @@ I also learned that RAG has real limitations. It can retrieve relevant context, 
 
 ## Status
 
-MVP complete. SourceRecall can build a local vector store from text files, retrieve relevant chunks, and generate grounded answers using a local LLM.
+MVP complete.
+
+SourceRecall can build a local vector store from text files, retrieve relevant chunks, and generate source-grounded answers using a local LLM.

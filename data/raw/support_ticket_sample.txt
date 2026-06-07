@@ -1,0 +1,16 @@
+category: support ticket
+
+Ticket: Retrieval returns unrelated sources
+Status: open
+
+problem:
+When the dataset is small or top_k is too high, SourceRecall may retrieve sources that are only loosely related to the question.
+
+example:
+A question about Sarah's action items may retrieve business notes correctly, but also include project or fitness notes as lower-ranked sources.
+
+possible fixes:
+- rename output from Sources to Retrieved Sources
+- allow top_k to be configured from the command line
+- improve chunking strategy
+- add filtering by document category in the future

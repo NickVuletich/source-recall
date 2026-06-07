@@ -15,4 +15,4 @@ carbs: 180g
 fat: 55g
 
 notes:
-felt strong, hit a bench PR
+PR event: bench press 225 lbs x 5 was a personal record.

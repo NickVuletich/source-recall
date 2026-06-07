@@ -1,0 +1,18 @@
+category: meeting notes
+
+Meeting: AI Workflow Planning
+Date: 01-04-2000
+
+discussion:
+The team discussed building a lightweight internal assistant for searching project notes, customer requests, and recurring tasks. The main goal is to reduce time spent digging through scattered documents.
+
+decisions:
+- start with local text files before adding PDFs
+- keep the first version CLI-based
+- prioritize source-grounded answers over fancy UI
+- document known limitations clearly
+
+action items:
+- create sample documents for testing
+- add example queries to the README
+- test retrieval quality across multiple document types

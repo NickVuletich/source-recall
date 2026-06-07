@@ -35,7 +35,7 @@ def main():
         
         query = " ".join(sys.argv[2:])
 
-        chunks = retrieve_chunks(query, top_k=6)
+        chunks = retrieve_chunks(query)
         answer = generate_answer(query, chunks)
 
         print("\nQuestion:")
@@ -44,7 +44,7 @@ def main():
         print("\nAnswer:")
         print(answer)
 
-        print("\nSources:")
+        print("\nRetrieved Sources:")
         for chunk in chunks:
             source = chunk["metadata"]["source"]
             distance = chunk["distance"]
