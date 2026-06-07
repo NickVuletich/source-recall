@@ -9,6 +9,6 @@ Pain points:
 - no simple way to summarize conversations
 
 action items:
-- ask Sarah what CRM or spreadsheet she currently uses
+- Contact Sarah to ask which CRM or spreadsheet she currently uses
 - create a simple follow-up workflow
 - send summary by Friday
